@@ -11,9 +11,8 @@ public class EnemyUnit : MonoBehaviour
 
     public string[] allAnswers;
 
-    public string[][] answerArrays;
+    public string[][] answerArrays; //a jagged array - stores an array within an array
 
-    // Start is called before the first frame update
     void Awake()
     {
         #region Error Prevention
@@ -29,6 +28,12 @@ public class EnemyUnit : MonoBehaviour
             Debug.LogError("Number of questions is not relative to the amount of answers. 3 per Question");
             Application.Quit();
             return;
+        }
+
+        if (hp > 8)
+        {
+            hp = 8;
+            Debug.LogWarning("HP cannot be higher than 8!");
         }
         #endregion
 

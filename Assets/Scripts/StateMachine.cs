@@ -19,4 +19,19 @@ public class StateMachine : MonoBehaviour
     {
         
     }
+
+    public void OnButton1()
+    {
+
+    }
+
+    public void OnButton2()
+    {
+
+    }
+
+    public void OnButton3()
+    {
+
+    }
 }
