@@ -26,7 +26,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8303360929843651466}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.14, y: 2.98, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 6, y: 6, z: 6}
   m_Children: []
   m_Father: {fileID: 0}
@@ -96,14 +96,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyName: ExampleName
-  hp: 3
+  maxHP: 3
+  curHP: 0
   questions:
   - Question 1
   - Question 2
+  - Question 3
+  incorrectlyAnsweredQs: 
   allAnswers:
-  - 0 Answer A
-  - 0 Answer B
-  - 0 Answer C
-  - 1 Answer A
-  - 1 Answer B
-  - 1 Answer C
+  - 0 Answer A:n
+  - 0 Answer B:y
+  - 0 Answer C:n
+  - 1 Answer A:y
+  - 1 Answer B:n
+  - 1 Answer C:n
+  - 2 Answer A:n
+  - 2 Answer B:n
+  - 2 Answer C:y
