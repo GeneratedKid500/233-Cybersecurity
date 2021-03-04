@@ -10,6 +10,7 @@ public class EnemyUnit : MonoBehaviour
     public int maxHP;
     [HideInInspector] public int curHP;
 
+    //array of questions
     public string[] questions;
 
     public List<int> incorrectlyAnsweredQs;

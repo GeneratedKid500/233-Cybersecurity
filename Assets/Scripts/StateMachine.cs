@@ -14,10 +14,28 @@ public class StateMachine : MonoBehaviour
     EnemyUnit enemyUnit;
 
     //system vars
+    /// <summary>
+    /// current question 
+    /// </summary>
     int questionNumber = 1;
+
     int battleScore, correctQuestions;
+
+    /// <summary>
+    /// a list of questions the player gets wrong that is added to after the second time they get them wrong
+    /// </summary>
     List<int> incorrectQuestions;
+
+    /// <summary>
+    /// a bool which is set to true once the end of the list of questions is enabled which allows 
+    /// the program to revisit questions the player got incorrect
+    /// </summary>
     public bool incorrectLoop = false;
+
+    /// <summary>
+    /// controls whether the player can input
+    /// </summary>
+    bool clickyButton = true;
 
     void Awake()
     {
@@ -38,12 +56,13 @@ public class StateMachine : MonoBehaviour
     /// <param name="result"></param>
     void UpdateScore(bool result)
     {
+        clickyButton = false;
         // if the player answered correctly
         if (result)
         {
             //things that happen in both loops
             correctQuestions++;
-            battleScore = correctQuestions * 200;
+            battleScore += 200;
             updateUI.DisplayResult("That answer was... correct!");
             enemyUnit.TakeDamage(1);
 
@@ -58,6 +77,12 @@ public class StateMachine : MonoBehaviour
         {
             //things that happen in both loops 
             updateUI.DisplayResult("That answer was... incorrect");
+            if (battleScore > 0)
+            {
+                battleScore -= 100;
+                if (battleScore < 0)
+                    battleScore = 0;
+            }
             
             //things that happen in incorrect loop
             if (incorrectLoop)
@@ -75,6 +100,7 @@ public class StateMachine : MonoBehaviour
             }
         }
 
+        updateUI.DisplayScore(battleScore);
         UpdateQuestion();
     }
 
@@ -92,10 +118,12 @@ public class StateMachine : MonoBehaviour
         }
 
         // checks if it should calculate the question on display
-        // firstly checks if the question isn't at the end of the array of questions yet
-        // or checks if the variable "incorrect loop" is true
-        if (questionNumber < enemyUnit.questions.Length || incorrectLoop)
+        // firstly checks if the question isn't at the end of the array of questions yet and if the bool incorrect loop is not enabled
+        // or checks if the variable "incorrect loop" is true and if the length of the list of incorrect answers is greater than 1
+        if (incorrectLoop && enemyUnit.incorrectlyAnsweredQs.Count > 1 || !incorrectLoop && questionNumber < enemyUnit.questions.Length)
         {
+            clickyButton = true;
+
             //if its not the "incorrect loop", simply adds 1 to question counter
             //also ensures chance2 is disabled
             if (!incorrectLoop)
@@ -107,17 +135,8 @@ public class StateMachine : MonoBehaviour
             {
                 //ensures chance 2 is enabled
                 updateUI.DisplayChance2(true);
-                // if the incorrectly answered lists length is equal to 1 (it has a palceholder value to start)
-                // then it will end the battle
-                if (enemyUnit.incorrectlyAnsweredQs.Count == 1)
-                {
-                    EndBattle();
-                }
-                // otherwise, it sets the question number to be the second number in the list of this array
-                else
-                {
-                    questionNumber = enemyUnit.incorrectlyAnsweredQs[1];
-                }
+                //updates question on display
+                questionNumber = enemyUnit.incorrectlyAnsweredQs[1];
             }
 
             //passes it onto the updateUI class with question number in toe
@@ -134,12 +153,51 @@ public class StateMachine : MonoBehaviour
     /// </summary>
     void EndBattle()
     {
+        //counts the amount of questions that are incorrect
         int aoIncorrectQuestions = this.incorrectQuestions.Count;
+        Debug.Log("Amount of Incorrect Questions:" + aoIncorrectQuestions);
 
-        updateUI.DisplayResult("Quiz is over");
+        //new array that stores bools as to whether the questions were answered correct or false
+        bool[] results = new bool[enemyUnit.questions.Length];
+        for (int i = 0; i < results.Length; i++)
+        {
+            if (CollateAnswers(i))
+                results[i] = false;
+            else
+                results[i] = true;
+
+            Debug.Log(results[i]);
+        }
 
         Debug.LogWarning("End Application - Cause: Questions Ended!");
+
+        /// SAVING TO SCRIPTABLE OBJECT WOULD GO HERE
+        /// 
+        /// I RECOMMEND SAVING:
+        /// string[]: enemyUnit.questions - has all questions stored by name
+        /// bool[]: results - has all results stored
+        /// int: aoIncorrectQuestions - the amount of questions incorrectly answered 
+        /// int: battleScore - score from battle
+
         return;
+    }
+    
+    /// <summary>
+    /// for use with EndBattle() cycles through incorrectQuestions Array
+    /// </summary>
+    /// <param name="i"> value i in EndBattle() </param>
+    /// <returns></returns>
+    bool CollateAnswers(int i) 
+    {
+        for (int j = 0; j < incorrectQuestions.Count; j++)
+        {
+            if (i+1 == incorrectQuestions[j])
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /// <summary>
@@ -160,8 +218,10 @@ public class StateMachine : MonoBehaviour
     public void OnButton1()
     {
         Debug.Log("Button1 - " + updateUI.option1.text + " - pressed");
-
-        UpdateScore(enemyUnit.checkCorrectAnswer(questionNumber, updateUI.option1.text));
+        if (clickyButton)
+        {
+            UpdateScore(enemyUnit.checkCorrectAnswer(questionNumber, updateUI.option1.text));
+        }
     }
 
     /// <summary>
@@ -170,8 +230,8 @@ public class StateMachine : MonoBehaviour
     public void OnButton2()
     {
         Debug.Log("Button1 - " + updateUI.option2.text + " - pressed");
-
-        UpdateScore(enemyUnit.checkCorrectAnswer(questionNumber, updateUI.option2.text));
+        if (clickyButton)
+            UpdateScore(enemyUnit.checkCorrectAnswer(questionNumber, updateUI.option2.text));
     }
 
     /// <summary>
@@ -181,6 +241,7 @@ public class StateMachine : MonoBehaviour
     {
         Debug.Log("Button1 - " + updateUI.option3.text + " - pressed");
 
-        UpdateScore(enemyUnit.checkCorrectAnswer(questionNumber, updateUI.option3.text));
+        if (clickyButton)
+            UpdateScore(enemyUnit.checkCorrectAnswer(questionNumber, updateUI.option3.text));
     }
 }

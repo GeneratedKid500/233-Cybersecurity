@@ -7,6 +7,7 @@ public class UpdateUI : MonoBehaviour
 {
     public Text enemyName;
     public Text enemyAttack;
+    public Text score;
     public Image chance;
     public Text option1;
     public Text option2;
@@ -89,6 +90,15 @@ public class UpdateUI : MonoBehaviour
     }
 
     /// <summary>
+    /// updates the box on the left to the text passed in
+    /// </summary>
+    /// <param name="text"> string of text that will be displayed </param>
+    public void DisplayResult(string text)
+    {
+        enemyAttack.text = text;
+    }
+
+    /// <summary>
     /// controls the enabled / disable of the ui box which informs the player if this is their first time answering a question
     /// </summary>
     /// <param name="enable"> the bool passed in </param>
@@ -121,12 +131,19 @@ public class UpdateUI : MonoBehaviour
     }
 
     /// <summary>
-    /// updates the box on the left to the text passed in
+    /// updates the display of the score
     /// </summary>
-    /// <param name="text"> string of text that will be displayed </param>
-    public void DisplayResult(string text)
+    /// <param name="battleScore"> score int passed in</param>
+    public void DisplayScore(int battleScore)
     {
-        enemyAttack.text = text;
+        if (battleScore == 0)
+        {
+            score.text = "Current Score: 000";
+        }
+        else
+        {
+            score.text = "Current Score: " + battleScore; 
+        }
     }
     #endregion
 
