@@ -34,6 +34,11 @@ public class StateMachine : MonoBehaviour
     int incorrectCounter = 0;
 
     /// <summary>
+    /// stores and counts how many times a question is answered incorrectly
+    /// </summary>
+    int[] timesAttempted;
+
+    /// <summary>
     /// controls whether the player can input
     /// </summary>
     bool clickyButton = true;
@@ -44,6 +49,7 @@ public class StateMachine : MonoBehaviour
 
         GameObject enemyGo = Instantiate(enemyPrefab, enemyLocation);
         enemyUnit = enemyGo.GetComponent<EnemyUnit>();
+        timesAttempted = new int[enemyUnit.questions.Length];
     }
 
     void Start()
@@ -57,6 +63,7 @@ public class StateMachine : MonoBehaviour
     /// <param name="result"></param>
     void UpdateScore(bool result)
     {
+        timesAttempted[questionNumber - 1]++;
         clickyButton = false;
         // if the player answered correctly
         if (result)
@@ -159,7 +166,6 @@ public class StateMachine : MonoBehaviour
     {
         //counts the amount of questions that are incorrect
         int aoIncorrectQuestions = this.incorrectQuestions.Count;
-        Debug.Log("Amount of Incorrect Questions:" + aoIncorrectQuestions);
 
         //new array that stores bools as to whether the questions were answered correct or false
         bool[] results = new bool[enemyUnit.questions.Length];
@@ -171,8 +177,6 @@ public class StateMachine : MonoBehaviour
                 results[i] = false;
             else
                 results[i] = true;
-
-            Debug.Log(results[i]);
         }
 
         Debug.LogWarning("End Application - Cause: Questions Ended!");
@@ -180,8 +184,9 @@ public class StateMachine : MonoBehaviour
         /// SAVING TO SCRIPTABLE OBJECT WOULD GO HERE
         /// 
         /// I RECOMMEND SAVING:
-        /// string[]: enemyUnit.questions - has all questions stored by name
-        /// bool[]: results - has all results stored
+        /// string[]: enemyUnit.questions - has all questions stored by name as an array of strings
+        /// bool[]: results - has all results stored as an array of booleans
+        /// int[]: timesAttempted - stores the amount of times each question was attempted as an array of integers
         /// int: aoIncorrectQuestions - the amount of questions incorrectly answered twice
         /// int: battleScore - score from battle
 
