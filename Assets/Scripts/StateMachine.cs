@@ -31,6 +31,7 @@ public class StateMachine : MonoBehaviour
     /// the program to revisit questions the player got incorrect
     /// </summary>
     public bool incorrectLoop = false;
+    int incorrectCounter = 0;
 
     /// <summary>
     /// controls whether the player can input
@@ -61,6 +62,7 @@ public class StateMachine : MonoBehaviour
         if (result)
         {
             //things that happen in both loops
+            incorrectCounter = 0;
             correctQuestions++;
             battleScore += 200;
             updateUI.DisplayResult("That answer was... correct!");
@@ -89,8 +91,10 @@ public class StateMachine : MonoBehaviour
             {
                 // removes from list and adds to another as the system uses the second slot for calculations
                 // but the incorrect questions still need to be stored somewhere
-                this.incorrectQuestions.Add(enemyUnit.incorrectlyAnsweredQs[1]);
-                enemyUnit.incorrectlyAnsweredQs.RemoveAt(1);
+                incorrectCounter++;
+                if (incorrectCounter >= 1)
+                    this.incorrectQuestions.Add(enemyUnit.incorrectlyAnsweredQs[1]);
+                ///enemyUnit.incorrectlyAnsweredQs.RemoveAt(1);
             }
 
             //things that happen in first loop
@@ -159,6 +163,8 @@ public class StateMachine : MonoBehaviour
 
         //new array that stores bools as to whether the questions were answered correct or false
         bool[] results = new bool[enemyUnit.questions.Length];
+        // loops through the array and assigns true or false depending on if the questions number
+        // is found in the "incorrect Questions" array
         for (int i = 0; i < results.Length; i++)
         {
             if (CollateAnswers(i))
@@ -176,7 +182,7 @@ public class StateMachine : MonoBehaviour
         /// I RECOMMEND SAVING:
         /// string[]: enemyUnit.questions - has all questions stored by name
         /// bool[]: results - has all results stored
-        /// int: aoIncorrectQuestions - the amount of questions incorrectly answered 
+        /// int: aoIncorrectQuestions - the amount of questions incorrectly answered twice
         /// int: battleScore - score from battle
 
         return;
